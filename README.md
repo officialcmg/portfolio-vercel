@@ -89,7 +89,7 @@ curl -X POST http://localhost:3000/api/portfolio \
 1. Initialize git: `git init`
 2. Add files: `git add .`
 3. Commit: `git commit -m "Initial commit"`
-4. Create GitHub repo: `gh repo create paylinx-vercel --public`
+4. Create GitHub repo: `gh repo create portfolio-vercel --public`
 5. Push: `git push -u origin main`
 
 ## Features
