@@ -2,11 +2,15 @@
 
 A Vercel Edge Function that fetches portfolio tokens for a given Ethereum address using the 1inch API.
 
-## API Endpoint
+## API Endpoints
 
-### POST `/api/portfolio`
+### Single Endpoint: POST `/api/portfolio`
 
 Fetches portfolio tokens for a given Ethereum address.
+
+### Multiple Endpoints: `/api/wallet/*`
+
+The wallet API provides multiple endpoints for comprehensive wallet analysis:
 
 #### Request Body
 ```json
@@ -101,3 +105,90 @@ curl -X POST http://localhost:3000/api/portfolio \
 - ✅ Response caching (1 minute)
 - ✅ Ethereum address validation
 - ✅ Comprehensive logging
+
+## Multiple Endpoints API
+
+The `/api/wallet/*` endpoints provide a comprehensive wallet analysis suite:
+
+### 🏥 GET `/api/wallet/health`
+Health check endpoint - no authentication required.
+
+**Response:**
+```json
+{
+  "success": true,
+  "status": "healthy",
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "version": "1.0.0",
+  "supportedChains": ["Ethereum (1)", "Base (8453)", "..."]
+}
+```
+
+### 📊 POST `/api/wallet/portfolio`
+Get detailed portfolio tokens (same as `/api/portfolio`).
+
+### 💰 POST `/api/wallet/balance`
+Get total portfolio balance summary.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "address": "0x...",
+    "chainId": "8453",
+    "chainName": "Base",
+    "totalBalanceUSD": 49.76,
+    "tokenCount": 3
+  }
+}
+```
+
+### ℹ️ POST `/api/wallet/info`
+Get comprehensive wallet information with token breakdown.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "address": "0x...",
+    "chainId": "8453",
+    "chainName": "Base",
+    "summary": {
+      "totalBalanceUSD": 49.76,
+      "tokenCount": 3,
+      "topToken": {
+        "symbol": "ETH",
+        "name": "Ether",
+        "valueUSD": 33.42,
+        "percentage": "67.15"
+      }
+    },
+    "tokens": [
+      {
+        "symbol": "ETH",
+        "name": "Ether", 
+        "valueUSD": 33.42,
+        "percentage": "67.15"
+      }
+    ]
+  }
+}
+```
+
+### 📋 GET `/api/wallet`
+Lists all available endpoints.
+
+## Testing Multiple Endpoints
+
+```bash
+# Test all endpoints
+node test-multiple-endpoints.js
+
+# Individual endpoint tests
+curl -X GET http://localhost:3000/api/wallet/health
+curl -X POST http://localhost:3000/api/wallet/balance \
+  -H "Content-Type: application/json" \
+  -d '{"address": "0xe7995A5b1B41779DeA900E2204dc08110de363d5"}'
+```
