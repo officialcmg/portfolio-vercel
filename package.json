@@ -1,5 +1,5 @@
 {
-  "name": "paylinx-vercel",
+  "name": "portfolio-vercel",
   "version": "1.0.0",
   "description": "Vercel Edge Function for fetching portfolio tokens",
   "main": "index.js",

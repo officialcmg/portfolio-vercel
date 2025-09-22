@@ -1,4 +1,4 @@
-# PayLinx Vercel Edge Function
+# Portfolio Vercel Edge Function
 
 A Vercel Edge Function that fetches portfolio tokens for a given Ethereum address using the 1inch API.
 
