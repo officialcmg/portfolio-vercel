@@ -12,7 +12,7 @@ export async function fetchPortfolioTokens(userAddress: string): Promise<Portfol
   const config = {
     params: {
       addresses: [userAddress],
-      chain_id: "8453",
+      chain_id: "534352",
     },
     paramsSerializer: {
       indexes: null,
@@ -30,7 +30,7 @@ export async function fetchPortfolioTokens(userAddress: string): Promise<Portfol
 
 // Fetch token metadata including logoURIs
 export async function fetchTokenMetadata(contractAddresses: string[]): Promise<TokenMetadataResponse> {
-  const url = "https://1inch-proxy-prtfl.vercel.app/token/v1.3/8453/custom";
+  const url = "https://1inch-proxy-prtfl.vercel.app/token/v1.3/534352/custom";
 
   const config = {
     params: {

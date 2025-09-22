@@ -7,11 +7,30 @@ export const config = {
 };
 
 export default async function handler(req: NextRequest) {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new NextResponse(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    });
+  }
+
   // Only allow POST requests
   if (req.method !== 'POST') {
     return NextResponse.json(
       { success: false, error: 'Method not allowed. Use POST.' },
-      { status: 405 }
+      { 
+        status: 405,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        }
+      }
     );
   }
 
@@ -23,7 +42,14 @@ export default async function handler(req: NextRequest) {
     if (!body.address || typeof body.address !== 'string') {
       return NextResponse.json(
         { success: false, error: 'Invalid or missing address parameter' },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          }
+        }
       );
     }
 
@@ -32,7 +58,14 @@ export default async function handler(req: NextRequest) {
     if (!addressRegex.test(body.address)) {
       return NextResponse.json(
         { success: false, error: 'Invalid Ethereum address format' },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          }
+        }
       );
     }
 
@@ -53,6 +86,9 @@ export default async function handler(req: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=60', // Cache for 1 minute
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
     });
 
@@ -64,6 +100,13 @@ export default async function handler(req: NextRequest) {
       error: error instanceof Error ? error.message : 'Internal server error'
     };
 
-    return NextResponse.json(errorResponse, { status: 500 });
+    return NextResponse.json(errorResponse, { 
+      status: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      }
+    });
   }
 }
