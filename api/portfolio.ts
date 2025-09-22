@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchProcessedPortfolio } from '../lib/portfolio-service';
 import { PortfolioRequest, PortfolioResponse } from '../lib/types';
+import { DEFAULT_CHAIN_ID, isSupportedChain, getChainName } from '../lib/config';
 
 export const config = {
   runtime: 'edge',
@@ -69,10 +70,26 @@ export default async function handler(req: NextRequest) {
       );
     }
 
-    console.log(`🚀 Processing portfolio request for address: ${body.address}`);
+    // Validate chain ID if provided
+    const chainId = body.chainId || DEFAULT_CHAIN_ID;
+    if (body.chainId && !isSupportedChain(body.chainId)) {
+      return NextResponse.json(
+        { success: false, error: `Unsupported chain ID: ${body.chainId}. Chain ${getChainName(body.chainId)} is not supported by 1inch API.` },
+        { 
+          status: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          }
+        }
+      );
+    }
+
+    console.log(`🚀 Processing portfolio request for address: ${body.address} on ${getChainName(chainId)}`);
 
     // Fetch and process the portfolio
-    const portfolioTokens = await fetchProcessedPortfolio(body.address);
+    const portfolioTokens = await fetchProcessedPortfolio(body.address, chainId);
 
     const response: PortfolioResponse = {
       success: true,

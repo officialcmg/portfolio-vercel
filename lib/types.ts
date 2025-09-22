@@ -36,6 +36,7 @@ export interface PortfolioToken {
 // Request/Response types for the API
 export interface PortfolioRequest {
   address: string;
+  chainId?: string; // Optional chain ID, defaults to Base (8453)
 }
 
 export interface PortfolioResponse {

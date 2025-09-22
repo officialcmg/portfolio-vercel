@@ -11,9 +11,29 @@ Fetches portfolio tokens for a given Ethereum address.
 #### Request Body
 ```json
 {
-  "address": "0xe7995A5b1B41779DeA900E2204dc08110de363d5"
+  "address": "0xe7995A5b1B41779DeA900E2204dc08110de363d5",
+  "chainId": "8453"
 }
 ```
+
+**Parameters:**
+- `address` (required): Ethereum address to fetch portfolio for
+- `chainId` (optional): Chain ID to use. Defaults to Base (8453) if not provided.
+
+**Supported Chain IDs:**
+- `1` - Ethereum
+- `56` - BNB Chain  
+- `137` - Polygon
+- `42161` - Arbitrum
+- `10` - Optimism
+- `43114` - Avalanche
+- `8453` - Base (default)
+- `100` - Gnosis
+- `324` - zkSync Era
+- `59144` - Linea
+- `146` - Sonic
+
+**Note:** Scroll mainnet (534352) is **not supported** by the 1inch API.
 
 #### Response
 ```json
@@ -47,9 +67,15 @@ npm run dev
 
 3. Test the endpoint:
 ```bash
+# Test with default chain (Base)
 curl -X POST http://localhost:3000/api/portfolio \
   -H "Content-Type: application/json" \
   -d '{"address": "0xe7995A5b1B41779DeA900E2204dc08110de363d5"}'
+
+# Test with specific chain (Ethereum)
+curl -X POST http://localhost:3000/api/portfolio \
+  -H "Content-Type: application/json" \
+  -d '{"address": "0xe7995A5b1B41779DeA900E2204dc08110de363d5", "chainId": "1"}'
 ```
 
 ## Deployment

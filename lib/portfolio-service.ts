@@ -4,15 +4,20 @@ import {
   TokenMetadataResponse,
   PortfolioToken,
 } from "./types";
+import { DEFAULT_CHAIN_ID, isSupportedChain, getChainName } from "./config";
 
 // Fetch portfolio tokens for a user
-export async function fetchPortfolioTokens(userAddress: string): Promise<PortfolioApiResponse> {
+export async function fetchPortfolioTokens(userAddress: string, chainId: string = DEFAULT_CHAIN_ID): Promise<PortfolioApiResponse> {
+  // Validate chain support
+  if (!isSupportedChain(chainId)) {
+    throw new Error(`Unsupported chain ID: ${chainId}. Chain ${getChainName(chainId)} is not supported by 1inch API.`);
+  }
   const url = "https://1inch-proxy-prtfl.vercel.app/portfolio/portfolio/v5.0/tokens/snapshot";
 
   const config = {
     params: {
       addresses: [userAddress],
-      chain_id: "534352",
+      chain_id: chainId,
     },
     paramsSerializer: {
       indexes: null,
@@ -29,8 +34,8 @@ export async function fetchPortfolioTokens(userAddress: string): Promise<Portfol
 }
 
 // Fetch token metadata including logoURIs
-export async function fetchTokenMetadata(contractAddresses: string[]): Promise<TokenMetadataResponse> {
-  const url = "https://1inch-proxy-prtfl.vercel.app/token/v1.3/534352/custom";
+export async function fetchTokenMetadata(contractAddresses: string[], chainId: string = DEFAULT_CHAIN_ID): Promise<TokenMetadataResponse> {
+  const url = `https://1inch-proxy-prtfl.vercel.app/token/v1.3/${chainId}/custom`;
 
   const config = {
     params: {
@@ -51,12 +56,12 @@ export async function fetchTokenMetadata(contractAddresses: string[]): Promise<T
 }
 
 // Single function to fetch and process portfolio tokens
-export async function fetchProcessedPortfolio(userAddress: string): Promise<PortfolioToken[]> {
+export async function fetchProcessedPortfolio(userAddress: string, chainId: string = DEFAULT_CHAIN_ID): Promise<PortfolioToken[]> {
   try {
-    console.log('🔍 Fetching portfolio for address:', userAddress);
+    console.log('🔍 Fetching portfolio for address:', userAddress, 'on', getChainName(chainId));
     
     // Step 1: Fetch portfolio tokens
-    const portfolioData = await fetchPortfolioTokens(userAddress);
+    const portfolioData = await fetchPortfolioTokens(userAddress, chainId);
     console.log('📊 Raw portfolio data received:', {
       totalTokens: portfolioData.result?.length || 0,
       tokens: portfolioData.result?.map(t => ({ name: t.contract_name, symbol: t.contract_symbol, address: t.contract_address }))
@@ -70,7 +75,7 @@ export async function fetchProcessedPortfolio(userAddress: string): Promise<Port
     console.log('🏷️ Fetching metadata for', contractAddresses.length, 'tokens:', contractAddresses);
     
     // Step 3: Fetch token metadata (including logoURIs)
-    const tokenMetadata = await fetchTokenMetadata(contractAddresses);
+    const tokenMetadata = await fetchTokenMetadata(contractAddresses, chainId);
     console.log('🖼️ Token metadata received for', Object.keys(tokenMetadata).length, 'tokens');
     
     // Step 4: Process and return clean token array
